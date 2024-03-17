@@ -1,0 +1,126 @@
+networks:
+  default:
+    name: media
+    external: true
+
+services:
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - GUID=$GUID
+    volumes:
+      - $STACKDIR/prowlarr:/config
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=$TZ
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+
+  radarr:
+    image: ghcr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      - UMASK=022
+      - TZ=$TZ
+      - PUID=$PUID
+      - GUID=$GUID
+    volumes:
+      - $STACKDIR/radarr:/config
+      - $MEDIADIR:/media
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+
+  sonarr:
+    image: ghcr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      - TZ=$TZ
+      - UMASK=022
+      - PUID=$PUID
+      - GUID=$GUID
+    volumes:
+      - $STACKDIR/sonarrV3:/config
+      - $MEDIADIR:/media
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+
+  rdtclient:
+    container_name: rdtclient
+    environment:
+      - TZ=$TZ
+      - PUID=$PUID
+      - GUID=$GUID
+    volumes:
+      - $MEDIADIR:/media
+      - $STACKDIR/rdt-client:/data/db
+
+    image: rogerfar/rdtclient
+    restart: always
+    logging:
+      driver: json-file
+    network_mode: "service:gluetun"
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=$TZ
+      - PUID=$PUID
+      - GUID=$GUID
+    volumes:
+      - $STACKDIR/jellyseerr:/app/config
+    restart: unless-stopped
+    network_mode: "service:gluetun"
+
+  jellyfin:
+    image: jellyfin/jellyfin
+    container_name: jellyfin
+    environment:
+      - PUID=$PUID
+      - GUID=$GUID
+      - TZ=$TZ
+    volumes:
+      - $STACKDIR/jellyfin:/config
+      - $STACKDIR/jellyfin:/cache
+      - $MEDIADIR:/media
+    restart: "unless-stopped"
+    network_mode: "service:gluetun"
+
+  gluetun:
+    image: qmcgaw/gluetun
+    cap_add:
+      - NET_ADMIN
+    environment:
+      - VPN_SERVICE_PROVIDER=$VPNPROVIDER
+      - VPN_TYPE=wireguard
+
+      - WIREGUARD_PRIVATE_KEY=$WGPRIVATE
+      - WIREGUARD_PUBLIC_KEY=$WGPUBLIC
+
+      - WIREGUARD_ADDRESSES=$WGADDRESSES
+
+      - SERVER_COUNTRIES=$VPNCOUNTRIES
+
+      - PUID=$PUID
+      - GUID=$GUID
+
+    ports:
+      - 9696:9696 # Prowlarr
+      - 7878:7878 # Radarr
+      - 8989:8989 # Sonarr
+      - 6500:6500 # RDT Client
+      - 5055:5055 # Jellyseerr
+      - 8096:8096 # Jellyfin
+      - 8191:8191 # Flaresolverr
