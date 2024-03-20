@@ -1,6 +1,6 @@
 # Media Server Template
 
-The purpose of this repository is to provide a docker compose template that can be cloned onto any device to setup a local media server
+The purpose of this repository is to provide a docker compose template that can be cloned onto any device to setup a local media server.
 
 **DISCLAIMER:** This service should be used soley for accessing _public domain_ media. Using this to access copyrighted material is a crime, I am not responsible for how you choose to use it.
 
@@ -27,30 +27,30 @@ The purpose of this repository is to provide a docker compose template that can 
 
 In order to set the server up, `.env` must first be configured to your needs. It should be located in the same directory as your `compose.yaml`
 
-`MEDIADIR`: The directory on your machine in which the media will be saved to
+MEDIADIR: The directory on your machine in which the media will be saved to.
 
-`STACKDIR`: The directory in which the media stack will be located in, this can be the same directory as the `compose.yaml` if desired
+STACKDIR: The directory in which the media stack will be located in, this can be the same directory as the `compose.yaml` if desired.
 
-`PUID`: Your user ID
+PUID: Your user ID.
 
-`GUID`: Your group ID
+GUID: Your group ID.
 
-`TZ`: Your timezone, Region/City
+TZ: Your timezone, Region/City.
 
-`VPNPROVIDER`: The name of your VPN provider, for example surfshark
+VPNPROVIDER: The name of your VPN provider, for example surfshark.
 
-`VPNCOUNTRIES`: The country of the VPN location you want to connect to
+VPNCOUNTRIES: The country of the VPN location you want to connect to.
 
-`WGPRIVATE`: The private Wireguard key aquired from your VPN provider
+WGPRIVATE: The private Wireguard key aquired from your VPN provider.
 
-`WGPUBLIC`: The public Wireguard key aquired from your VPN provider
+WGPUBLIC: The public Wireguard key aquired from your VPN provider.
 
-`WGADDRESS`: The Wireguard address aquired from yoru VPN provider
+WGADDRESS: The Wireguard address aquired from your VPN provider.
 
-Before starting the containers, we first must create a new docker network named media, to do so, use `docker network create media`
+Before starting the containers, we first must create a new docker network named media, to do so, use `docker network create media`.
 
-After this, you can then boot up the containers with `docker compose up -d`, to shut them down, use `docker compose down`
-If everything else has been setup correctly, you should now be able to access webpages on the exposed ports of each service on your local machine
+After this, you can then boot up the containers with `docker compose up -d`. To shut them down, use `docker compose down`.
+If everything else has been setup correctly, you should now be able to access webpages on the exposed ports of each service on your local machine.
 
 # Server Configuration
 
